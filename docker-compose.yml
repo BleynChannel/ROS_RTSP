@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  master:
+    image: husarion/foxglove-bridge:noetic-nightly
+    command: roslaunch foxglove_bridge foxglove_bridge.launch port:=9090
+    ports:
+      - 11311:11311
+      - 9090:9090
+  
+  rtsp:
+    build: .
+    environment:
+      - "ROS_MASTER_URI=http://master:11311"
+    volumes:
+      - ./launch:/ros_ws/src/ROS_RTSP/launch
+    depends_on:
+      - master
+    network_mode: service:master

@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  master:
+    image: ros:noetic
+    command: roscore
+    ports:
+      - 11311:11311
+
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      - ROS_MASTER_URI=http://master:11311
+    command: roslaunch camera_driver TriCamera.launch
+    
+  rviz:
+    image: robopaas/rviz:latest
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    environment:
+      - ROS_MASTER_URI=http://master:11311
+      - DISPLAY=${DISPLAY:?err}
+      - LIBGL_ALWAYS_SOFTWARE=1
+    command: rviz

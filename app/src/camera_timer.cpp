@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
@@ -14,11 +14,12 @@ public:
   {
     DEFAULT_FPS = 40
   };
-  float scale = 0.4;
+  float scale = 1.0;
 
 
-  CameraDriver( char*  camera_url ): nh( "~" ) , it( nh ) , rtsp_read( camera_url )
+  CameraDriver( char*  camera_url, char* scale ): nh( "~" ) , it( nh ) , rtsp_read( camera_url )
   {
+	this->scale = atof(scale);
  
     nh.param<int>( "fps", fps, DEFAULT_FPS );
     ros::Duration period = ros::Duration( 1. / fps );
@@ -98,14 +99,14 @@ int main( int argc, char* argv[] )
 
    //char camera_rtsp[1024]=argv[1];
   cout<<"-------------------------"<<endl;
-   cout<<argv[1]<<endl;
+   cout<<argv[1]<<" --- "<<argv[2]<<endl;
 cout<<"-------------------------"<<endl;
  // char* camera_rtsp="rtmp://58.200.131.2:1935/livetv/hunantv";
    //char camera_rtsp[1024]="rtsp://admin:wanji123@192.168.2.101:554/cam/realmonitor?channel=1&subtype=0";
 
   
 
-  CameraDriver camera_driver(argv[1] );
+  CameraDriver camera_driver(argv[1], argv[2]);
 
   while( ros::ok() )
   {
